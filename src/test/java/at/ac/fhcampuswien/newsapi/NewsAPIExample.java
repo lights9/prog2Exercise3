@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.newsapi;
 
+import at.ac.fhcampuswien.newsanalyzer.ctrl.NewsApiException;
 import at.ac.fhcampuswien.newsapi.beans.Article;
 import at.ac.fhcampuswien.newsapi.beans.NewsResponse;
 import at.ac.fhcampuswien.newsapi.enums.Category;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public class NewsAPIExample {
 
-    public static final String APIKEY = "myKey";    //TODO add your api key
+    public static final String APIKEY = "64a3d2e6811d4505adf39b806396e5dd";    //TODO add your api key
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws NewsApiException {
 
         NewsApi newsApi = new NewsApiBuilder()
                 .setApiKey(APIKEY)
@@ -32,7 +33,7 @@ public class NewsAPIExample {
                 .setApiKey(APIKEY)
                 .setQ("corona")
                 .setEndPoint(Endpoint.EVERYTHING)
-                .setFrom("2020-03-20")
+                .setFrom("2021-06-14")
                 .setExcludeDomains("Lifehacker.com")
                 .createNewsApi();
 

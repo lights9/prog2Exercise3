@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.newsapi;
 
 
+import at.ac.fhcampuswien.newsanalyzer.ctrl.NewsApiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import at.ac.fhcampuswien.newsapi.beans.NewsResponse;
@@ -114,7 +115,7 @@ public class NewsApi {
         this.endpoint = endpoint;
     }
 
-    protected String requestData() {
+    protected String requestData() throws NewsApiException {
         String url = buildURL();
         System.out.println("URL: " + url);
         URL obj = null;
@@ -123,6 +124,7 @@ public class NewsApi {
         } catch (MalformedURLException e) {
             // TODO improve ErrorHandling
             e.printStackTrace();
+            throw new NewsApiException("Error with URL!!! " +e);
         }
         HttpURLConnection con;
         StringBuilder response = new StringBuilder();
@@ -137,16 +139,24 @@ public class NewsApi {
         } catch (IOException e) {
             // TODO improve ErrorHandling
             System.out.println("Error "+e.getMessage());
+            throw new NewsApiException("Error in NewsApi Class" +e);
         }
         return response.toString();
     }
 
-    protected String buildURL() {
-        // TODO ErrorHandling
+    protected String buildURL() throws NewsApiException {
+
         String urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
         StringBuilder sb = new StringBuilder(urlbase);
 
+        // TODO ErrorHandling
         System.out.println(urlbase);
+        if(getApiKey()==null || getApiKey().equals("")){
+            throw new NewsApiException("API key not correct! Provide again");
+        }
+        if(getEndpoint().getValue().equals("")) throw new NewsApiException("Enter Endpoint!");
+        if(getQ().equals("")) throw new NewsApiException("Enter q!");
+        if(NEWS_API_URL.equals("")) throw new NewsApiException("Provide URL!");
 
         if(getFrom() != null){
             sb.append(DELIMITER).append("from=").append(getFrom());
@@ -181,10 +191,12 @@ public class NewsApi {
         if(getSortBy() != null){
             sb.append(DELIMITER).append("sortBy=").append(getSortBy());
         }
+
+
         return sb.toString();
     }
 
-    public NewsResponse getNews() {
+    public NewsResponse getNews() throws NewsApiException{
         NewsResponse newsReponse = null;
         String jsonResponse = requestData();
         if(jsonResponse != null && !jsonResponse.isEmpty()){
@@ -197,6 +209,7 @@ public class NewsApi {
                 }
             } catch (JsonProcessingException e) {
                 System.out.println("Error: "+e.getMessage());
+                throw new NewsApiException("Fail with Json" + e);
             }
         }
         //TODO improve Errorhandling
